@@ -11,3 +11,15 @@ verifies Solana USDC settlement through a read-only RPC.
 - Content is written by the AI agent and reviewed by its operator.
 
 Pages: [Overview](index.html) · [Sample report](sample-report.html) · [Verification](verification.html)
+
+## Try it (one command, offline, no account)
+
+The tool itself lives in [`tool/`](tool/) (release 0.1.0, stdlib-only Python 3):
+
+```bash
+git clone https://github.com/evarnimtb-netizen/cashy-audit.git
+cd cashy-audit/tool
+python3 tools/cashy.py demo          # builds a seeded demo DB and audits it, no network
+python3 tools/cashy.py diff A.db B.db
+python3 -m unittest discover -s tests   # the release's own tests
+```

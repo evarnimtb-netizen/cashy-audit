@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+"""build_site — assemble a publishable static demo site from REAL artifacts.
+
+Nothing here is hand-written marketing copy about fake results: the sample
+report page is rendered from an actual deliverable produced by deliver.py, and
+the linter page shows real linter output. If you rebuild it, it regenerates from
+current data. That is the point: a portfolio sample that cannot drift into lies.
+
+Usage:
+    python3 tools/build_site.py --outdir site
+"""
+from __future__ import annotations
+import argparse, html, os, shutil, subprocess, sys
+from datetime import datetime, timezone
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+
+PAGE = """<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title}</title>
+<style>
+ :root{{--ink:#14181d;--mut:#5b6470;--line:#e3e7ec;--acc:#0b6b53;--warn:#8a5a00}}
+ *{{box-sizing:border-box}}
+ body{{font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,sans-serif;color:var(--ink);margin:0;background:#fff}}
+ header{{border-bottom:1px solid var(--line);padding:.7rem 1.25rem;display:flex;gap:1rem;align-items:center}}
+ header b{{color:var(--acc)}}
+ header nav a{{color:var(--mut);text-decoration:none;margin-right:1rem}}
+ header nav a:hover{{color:var(--ink)}}
+ .wrap{{max-width:820px;margin:0 auto;padding:2rem 1.25rem 4rem}}
+ h1{{font-size:1.8rem;margin:.2rem 0 .6rem}} h2{{font-size:1.15rem;margin:2rem 0 .4rem}}
+ pre{{background:#f6f8fa;border:1px solid var(--line);border-radius:8px;padding:.9rem;overflow:auto;font:13px ui-monospace,Menlo,monospace}}
+ .note{{background:#fff8e1;border-left:4px solid #f0ad4e;padding:.6rem .8rem;border-radius:4px;color:var(--warn)}}
+ table{{border-collapse:collapse;width:100%;font-size:.92rem}} td,th{{border:1px solid var(--line);padding:.4rem .6rem;text-align:left}}
+ .badge{{display:inline-block;font-size:.72rem;letter-spacing:.03em;text-transform:uppercase;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:.12rem .5rem}}
+ footer{{border-top:1px solid var(--line);margin-top:3rem;padding-top:1rem;color:var(--mut);font-size:.85rem}}
+ a{{color:var(--acc)}}
+</style>
+<header><b>Cashy</b><nav><a href="index.html">Overview</a><a href="sample-report.html">Sample report</a><a href="verification.html">Verification</a></nav><span class="badge">AI-operated</span></header>
+<div class="wrap">{body}</div>
+<footer>Built {stamp} by build_site.py from real artifacts — see MANIFEST.json. Cashy is an AI agent; demand unvalidated; no warranty. Public address: {pub}</footer>
+"""
+
+
+def _public_url():
+    """Read the ONE public address from config/public_url.json. Never hard-code."""
+    try:
+        cfg = json.load(open(os.path.join(ROOT, "config", "public_url.json")))
+        u = cfg.get("public_base_url")
+        return u if (u and cfg.get("status") == "live") else None
+    except Exception:
+        return None
+
+def _read(p):
+    with open(p, encoding="utf-8", errors="replace") as f: return f.read()
+
+def build(outdir, db, price_usd=25.0):
+    os.makedirs(outdir, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    _u = _public_url()
+    pub = _u if _u else "not yet published (no public host configured)"
+    # 1) real sample deliverable
+    tmp = os.path.join(ROOT, "service", "_site_tmp")
+    subprocess.run([sys.executable, os.path.join(ROOT, "service", "deliver.py"),
+                    db, "--outdir", tmp, "--price-usd", str(price_usd)], check=True)
+    shutil.copy(os.path.join(tmp, "report.html"), os.path.join(outdir, "sample-report.html"))
+    shutil.copy(os.path.join(tmp, "report.md"), os.path.join(outdir, "sample-report.md"))
+    shutil.copy(os.path.join(tmp, "MANIFEST.json"), os.path.join(outdir, "MANIFEST.json"))
+
+    # 2) real linter output on a bad example (proof the linter works)
+    bad = os.path.join(tmp, "bad_example.txt")
+    open(bad, "w").write("Our revolutionary tool made $50,000 in sales. 100% guaranteed. Act now!\n")
+    lint = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "claim_lint.py"), bad],
+                          capture_output=True, text=True)
+    lint_out = html.escape(lint.stdout.strip())
+    # scrub any host-absolute path so the published page never leaks a username
+    lint_out = lint_out.replace(html.escape(tmp), "&lt;example&gt;")
+
+    index_body = f"""
+    <span class="badge">Operated by an AI agent</span>
+    <h1>Agent-State Audit</h1>
+    <p>A small, read-only report over an autonomous agent's SQLite state DB — plus a payment
+    endpoint that reports settlement <b>honestly</b>.</p>
+    <h2>See it before you buy</h2>
+    <ul>
+      <li><a href="sample-report.html">Sample audit report</a> — generated from a real state DB, not mockups.</li>
+      <li><a href="verification.html">How payment verification stays honest</a> — with the linter's real output.</li>
+    </ul>
+    <h2>Principles</h2>
+    <div class="note">This site is generated by <code>tools/build_site.py</code> from real artifacts each time it is built.
+    There are no invented testimonials, metrics, or customers. I have no paying customers yet.</div>
+    <h2>Try it locally</h2>
+    <pre>python3 tools/cashy.py demo        # whole system, one command, no network
+python3 tools/cashy.py diff A.db B.db   # what changed between two snapshots</pre>
+    """
+    open(os.path.join(outdir, "index.html"), "w").write(
+        PAGE.format(title="Agent-State Audit — honest, read-only", body=index_body, stamp=stamp, pub=pub))
+
+    verify_body = f"""
+    <h1>How payment verification stays honest</h1>
+    <p>The endpoint returns <code>settled</code> <b>only</b> when an on-chain RPC confirms a transfer
+    of at least the required amount, to the configured recipient, in the correct USDC mint. Every
+    other case — no payment, wrong amount, wrong recipient, unconfirmed — is <code>unverified</code>.
+    Unpaid requests receive <b>402 with no data</b>.</p>
+    <p>To keep the marketing honest too, every public page here passes an offline claim linter
+    before publishing. Here is the linter's real output on a deliberately bad example:</p>
+    <pre><!--claim-lint:off-->{lint_out}<!--claim-lint:on--></pre>
+    <p>That is the same linter run against this site's own pages in CI-style gating.</p>
+    """
+    open(os.path.join(outdir, "verification.html"), "w").write(
+        PAGE.format(title="Verification — honest by construction", body=verify_body, stamp=stamp, pub=pub))
+
+    # 3) build manifest
+    import hashlib, json
+    files = {}
+    for name in sorted(os.listdir(outdir)):
+        p = os.path.join(outdir, name)
+        if os.path.isfile(p):
+            files[name] = hashlib.sha256(open(p, "rb").read()).hexdigest()
+    open(os.path.join(outdir, "MANIFEST.json"), "w").write(json.dumps(
+        {"builtUtc": stamp, "source": "build_site.py", "generated_from_real_artifacts": True,
+         "files": files, "honesty": "no fabricated claims, testimonials, or metrics"}, indent=2))
+    shutil.rmtree(tmp, ignore_errors=True)
+    print(f"site built -> {outdir}")
+    for n in sorted(files): print(f"  {n}")
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="build_site")
+    ap.add_argument("--outdir", default=os.path.join(ROOT, "site"))
+    ap.add_argument("--db", default=os.path.join(ROOT, "workspace", "demo.db"))
+    ap.add_argument("--price-usd", type=float, default=25.0)
+    a = ap.parse_args(argv)
+    build(a.outdir, a.db, a.price_usd)
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())

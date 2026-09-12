@@ -1,0 +1,18 @@
+1) seeding sample state DB ... ~/.automaton/sandbox/workspace/demo.db
+2) status:
+Cashy status — 2026-09-12T19:06:25.577255+00:00
+db: ~/.automaton/sandbox/workspace/demo.db
+------------------------------------------------
+  goals            1
+  turns            1
+  spend_cents      42  (~$0.42)
+------------------------------------------------
+Honesty: unpaid services return 402; settlement is 'unverified' until an RPC confirms.
+3) rendering self-contained HTML report ... ~/.automaton/sandbox/workspace/demo_audit.html
+wrote ~/.automaton/sandbox/workspace/demo_audit.html (2081 bytes)
+   html bytes: 2084
+4) /health: 200
+5) unpaid /report -> 402 (expect 402)
+6) paid /report.json -> 200 | payment.status = unverified (unverified without RPC)
+7) ledger recorded: 54 events
+DEMO OK — unpaid blocked, paid served, settlement truthful.

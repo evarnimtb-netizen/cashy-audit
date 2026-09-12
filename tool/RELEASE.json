@@ -1,0 +1,7 @@
+{
+  "name": "cashy-audit-0.1.0",
+  "version": "0.1.0",
+  "built_utc": "2026-09-12T20:10:10.193961+00:00",
+  "tests": "test_settlement 10/10, test_audit_service 12/12, test_claim_lint 11/11",
+  "honesty": "unpaid->402; settled only on confirmed on-chain transfer"
+}
