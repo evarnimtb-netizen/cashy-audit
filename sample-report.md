@@ -1,6 +1,6 @@
 # Cashy audit report
-_Generated: 2026-09-12T19:18:12.071479+00:00_
-DB: `~/.automaton/sandbox/workspace/demo.db`
+_Generated: 2026-09-12T20:00:49.994711+00:00_
+DB: `demo.db`
 
 ## Table sizes
 - **goals**: 1

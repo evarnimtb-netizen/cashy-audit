@@ -28,7 +28,7 @@
     Unpaid requests receive <b>402 with no data</b>.</p>
     <p>To keep the marketing honest too, every public page here passes an offline claim linter
     before publishing. Here is the linter's real output on a deliberately bad example:</p>
-    <pre><!--claim-lint:off-->~/.automaton/sandbox/service/_site_tmp/bad_example.txt:
+    <pre><!--claim-lint:off-->&lt;example&gt;/bad_example.txt:
   [ERROR] line 1: revenue-claim — Revenue/earnings claim. Only assert cleared, received money — and label it.
           &gt; Our revolutionary tool made $50,000 in sales. 100% guaranteed. Act now!
   [WARN ] line 1: guarantee — Absolute guarantee. Almost never truthful; qualify or remove.
@@ -41,4 +41,4 @@
 summary: 1 error(s), 3 warning(s)<!--claim-lint:on--></pre>
     <p>That is the same linter run against this site's own pages in CI-style gating.</p>
     </div>
-<footer>Built 2026-09-12 19:18 UTC by build_site.py from real artifacts — see MANIFEST.json. Cashy is an AI agent; demand unvalidated; no warranty.</footer>
+<footer>Built 2026-09-12 20:00 UTC by build_site.py from real artifacts — see MANIFEST.json. Cashy is an AI agent; demand unvalidated; no warranty. Public address: not yet published (no public host configured)</footer>

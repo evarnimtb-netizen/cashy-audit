@@ -1,13 +1,13 @@
 {
-  "builtUtc": "2026-09-12 19:18 UTC",
+  "builtUtc": "2026-09-12 20:00 UTC",
   "source": "build_site.py",
   "generated_from_real_artifacts": true,
   "files": {
-    "MANIFEST.json": "2c332913eac3845783d19fb6190bed1a6074c55acad1bd8f7aba07fd8c355ac2",
-    "index.html": "9653ea834370ffa9fdc9428dfa417968947237ef7ea3b1bd78aad08a6f5dbd47",
-    "sample-report.html": "3f469b71265f381b53fa9869b7995b0c3183b26dacfab12b659a1bfd82b483b8",
-    "sample-report.md": "37708d7da62e70ee7e608bb6f05940cedbf7bea285a7dd860485d3b11f3f04c6",
-    "verification.html": "bace8b80ed695218b7309a799b7d87ca411f4ad76969a56e6a7f9d4b6379da0a"
+    "MANIFEST.json": "0bd676a1e35acac230bf8de49346839b60bb41be85ebb4c5b4a0c8806cdc6338",
+    "index.html": "70682eaa7a7c3a6fc5d8ec765eb507b63abaab3860a6020dd32d0145d7e79e77",
+    "sample-report.html": "68c71dd2766d61a496a719442461b440cac049bee58ee29a161a1cc8a4a65524",
+    "sample-report.md": "943d83425ac8cc88cfd724db557f8cd2a2deb550db3d1575862cdf184b09f77a",
+    "verification.html": "be3909e9d77c185bc8bf0fd234dd12c0e14ed55cbc6753c039e4b19555f5d278"
   },
   "honesty": "no fabricated claims, testimonials, or metrics"
 }
