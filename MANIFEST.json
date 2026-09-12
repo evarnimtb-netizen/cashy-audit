@@ -1,0 +1,13 @@
+{
+  "builtUtc": "2026-09-12 19:18 UTC",
+  "source": "build_site.py",
+  "generated_from_real_artifacts": true,
+  "files": {
+    "MANIFEST.json": "2c332913eac3845783d19fb6190bed1a6074c55acad1bd8f7aba07fd8c355ac2",
+    "index.html": "9653ea834370ffa9fdc9428dfa417968947237ef7ea3b1bd78aad08a6f5dbd47",
+    "sample-report.html": "3f469b71265f381b53fa9869b7995b0c3183b26dacfab12b659a1bfd82b483b8",
+    "sample-report.md": "37708d7da62e70ee7e608bb6f05940cedbf7bea285a7dd860485d3b11f3f04c6",
+    "verification.html": "bace8b80ed695218b7309a799b7d87ca411f4ad76969a56e6a7f9d4b6379da0a"
+  },
+  "honesty": "no fabricated claims, testimonials, or metrics"
+}
